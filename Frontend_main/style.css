@@ -1,0 +1,35 @@
+:root{
+  --bg:#0f1724; --card:#0b1220; --muted:#9aa5bd; --accent:#60a5fa;
+  --low:#10b981; --moderate:#f59e0b; --high:#f97316; --critical:#ef4444;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#071028 0%, #071635 100%);color:#e6eef8}
+.container{max-width:1200px;margin:24px auto;padding:20px}
+header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+h1{margin:0;font-size:20px}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:16px}
+.card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 20px rgba(2,6,23,.6)}
+.left .metric{display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-radius:8px;margin-bottom:8px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent)}
+.metric .name{font-size:13px;color:var(--muted)}
+.metric .value{font-weight:700}
+.controls{display:flex;gap:8px;margin-top:10px}
+button{background:var(--accent);border:none;color:#04223b;padding:8px 12px;border-radius:8px;cursor:pointer}
+.small{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:6px 10px}
+.map{height:260px;border-radius:10px;overflow:hidden}
+.alerts{margin-top:12px}
+.alert{padding:12px;border-radius:8px;margin-bottom:8px}
+.alert.low{background:linear-gradient(90deg,rgba(16,185,129,0.12),transparent);border:1px solid rgba(16,185,129,0.12);color:var(--low)}
+.alert.moderate{background:linear-gradient(90deg,rgba(245,158,11,0.12),transparent);border:1px solid rgba(245,158,11,0.12);color:var(--moderate)}
+.alert.high{background:linear-gradient(90deg,rgba(249,115,22,0.12),transparent);border:1px solid rgba(249,115,22,0.12);color:var(--high)}
+.alert.critical{background:linear-gradient(90deg,rgba(239,68,68,0.12),transparent);border:1px solid rgba(239,68,68,0.12);color:var(--critical)}
+.right .top-row{display:flex;gap:12px}
+.gauge{flex:1;padding:12px;border-radius:10px}
+.risk-big{display:flex;align-items:center;gap:12px}
+.risk-circle{width:110px;height:110px;border-radius:999px;display:grid;place-items:center;font-weight:800;font-size:22px}
+.risk-details{flex:1}
+canvas{background:transparent}
+.footer-note{font-size:13px;color:var(--muted);margin-top:12px}
+.input-row{display:flex;gap:8px;flex-wrap:wrap}
+.input-row input, .input-row select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--muted);min-width:120px}
+.legend{display:flex;gap:8px;align-items:center;margin-top:10px}
+.legend .dot{width:12px;height:12px;border-radius:3px}

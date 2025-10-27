@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Traveller Risk Analysis Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="" crossorigin=""/>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Traveller Risk Analysis — Live Wearables Dashboard</h1>
+      <div style="margin-left:auto;color:var(--muted);font-size:13px">Sample data: hr_bpm:90, spo2_pct:98.8, skin_temp:33.7, bp:120/78, altitude:300, lat:27.71, lon:85.33, steps:10000, past_incident_flag:1, weather:"Storm"</div>
+    </header>
+
+    <div class="grid">
+      <div class="left">
+        <div class="card">
+          <h3 style="margin:0 0 8px 0">Live Metrics</h3>
+
+          <div class="metric"><div class="name">Heart Rate (bpm)</div><div class="value" id="hr">90</div></div>
+          <div class="metric"><div class="name">SpO₂ (%)</div><div class="value" id="spo2">98.8</div></div>
+          <div class="metric"><div class="name">Skin Temp (°C)</div><div class="value" id="skin">33.7</div></div>
+          <div class="metric"><div class="name">Blood Pressure (sys/dia)</div><div class="value" id="bp">120 / 78</div></div>
+          <div class="metric"><div class="name">Altitude (m)</div><div class="value" id="alt">300</div></div>
+          <div class="metric"><div class="name">Steps</div><div class="value" id="steps">10000</div></div>
+          <div class="metric"><div class="name">Past Incident</div><div class="value" id="past">Yes</div></div>
+          <div class="metric"><div class="name">Weather</div><div class="value" id="weather">Storm</div></div>
+
+          <div class="controls">
+            <button id="analyzeBtn">Analyze</button>
+            <button class="small" id="simulateBtn">Simulate Live Update</button>
+            <button class="small" id="resetBtn">Reset to Sample</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="card" style="padding:10px;background:transparent;border:1px dashed rgba(255,255,255,0.02)">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Adjust values (for testing):</div>
+              <div class="input-row">
+                <input id="input_hr" type="number" step="1" placeholder="HR" value="90">
+                <input id="input_spo2" type="number" step="0.1" placeholder="SpO2" value="98.8">
+                <input id="input_skin" type="number" step="0.1" placeholder="Skin°C" value="33.7">
+                <input id="input_sys" type="number" placeholder="Systolic" value="120">
+                <input id="input_dia" type="number" placeholder="Diastolic" value="78">
+                <input id="input_alt" type="number" placeholder="Altitude" value="300">
+                <input id="input_steps" type="number" placeholder="Steps" value="10000">
+                <select id="input_inc">
+                  <option value="1">Past Incident: Yes</option>
+                  <option value="0">Past Incident: No</option>
+                </select>
+                <select id="input_weather">
+                  <option>Clear</option>
+                  <option>Clouds</option>
+                  <option>Rain</option>
+                  <option selected>Storm</option>
+                  <option>Snow</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="alerts" id="alerts"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin:0 0 8px 0">Location</h3>
+          <div id="map" class="map"></div>
+          <div style="margin-top:8px;font-size:13px;color:var(--muted)" id="coords">Lat: 27.71, Lon: 85.33</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <div class="top-row">
+            <div class="gauge" style="min-width:260px">
+              <div class="risk-big">
+                <div id="riskCircle" class="risk-circle" style="background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent);">--</div>
+                <div class="risk-details">
+                  <div style="font-size:14px;color:var(--muted)">Overall Risk Score</div>
+                  <div style="font-size:20px;font-weight:700" id="riskLevelText">Unknown</div>
+                  <div class="legend">
+                    <div style="display:flex;gap:8px;align-items:center;color:var(--muted)"><div class="dot" style="background:var(--low)"></div><div style="font-size:13px">Low</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;color:var(--muted)"><div class="dot" style="background:var(--moderate)"></div><div style="font-size:13px">Moderate</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;color:var(--muted)"><div class="dot" style="background:var(--high)"></div><div style="font-size:13px">High</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;color:var(--muted)"><div class="dot" style="background:var(--critical)"></div><div style="font-size:13px">Critical</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="flex:1">
+              <canvas id="trendChart" height="140"></canvas>
+            </div>
+          </div>
+
+          <div class="footer-note">Rules (simple heuristic): HR high → increases risk; low SpO₂ → increases risk; skin temp high → infection/heat stress risk; high BP → cardiovascular risk; altitude & stormy weather → environment risk; low steps & past incident → elevated risk.</div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin:0 0 8px 0">Recommendations</h3>
+          <ul id="recommendations" style="margin:0;padding-left:18px;color:var(--muted)">
+            <li>Click Analyze to evaluate current live metrics.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
